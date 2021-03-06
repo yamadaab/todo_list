@@ -22,11 +22,14 @@
 
       <br>
       <h2>Todoの一覧</h2>
+      <button type="button" class="btn btn-secondary btn-sm" v-if="IsCheckedMoreThan2()" v-on:click="deleteTodos">チェック済みを一括削除</button>
+
+      <div></div>
       <div v-for="item in todos" class="d-flex align-items-center justify-content-between p-3">
         <label>
-          <div class="form-check"><input class="form-check-input" type="checkbox" >{{ item.todo }}</div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" v-model="item.isChecked">{{ item.todo }}</div>
         </label>
-          <button type="button" class="btn btn-secondary btn-sm"　v-on:click="deleteTodo()">削除</button>
+          <button type="button" class="btn btn-secondary btn-sm"　v-if="item.isChecked" v-on:click="deleteTodo(item.id)">削除</button>
       </div>
     </div>
 
@@ -35,19 +38,38 @@
           el:"#app",
           data:{
             todos:[
-              { todo: 'todo1', id: 1 },
-              { todo: 'todo2', id: 2 },
-              { todo: 'todo3', id: 3 },
+              { todo: 'todo1', isChecked: false, id: 1 },
+              { todo: 'todo2', isChecked: false, id: 2 },
+              { todo: 'todo3', isChecked: false, id: 3 },
             ],
             newTodo: ''
           },
-          methods: {  
+          methods: {
             addTodo: function(){
               this.todos.push({
                 todo: this.newTodo,
-                id: this.todos.length +1
+                id: this.todos.length
               });
             },
+
+            deleteTodo: function(deleteId){
+              this.todos = this.todos.filter(function (item) {
+                return item.id != deleteId
+              })
+            },
+            
+            deleteTodos: function(){
+              this.todos = this.todos.filter(function (item) {
+                return item.isChecked === false
+              })
+            },
+
+            IsCheckedMoreThan2: function(){
+              let count = this.todos.filter(function (item) {
+                return item.isChecked === true
+            　}).length
+            return count >= 2
+            }
           }
         })
       </script>
